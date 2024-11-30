@@ -1,20 +1,13 @@
 {
   "name": "messenger-app",
   "version": "1.0.0",
-  "description": "A simple real-time messaging app",
-  "main": "server.js",
-  "scripts": {
-    "start": "node server.js"
+  "engines": {
+    "node": "16.20.1"
   },
   "dependencies": {
     "express": "^4.17.1",
-    "mongoose": "^5.9.10",
-    "body-parser": "^1.19.0",
-    "socket.io": "^4.0.0"
-  },
-  "devDependencies": {},
-  "engines": {
-    "node": "14.x"
-  },
-  "license": "ISC"
+    "mongoose": "^6.10.0",
+    "socket.io": "^4.3.2",
+    "body-parser": "^1.19.0"
+  }
 }
