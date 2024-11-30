@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chat App</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Header with "MADE BY NIKO JAY SEDAN" -->
+  <div id="app-header">
+    MADE BY NIKO JAY SEDAN
+  </div>
+
+  <!-- Running text bar -->
+  <div id="running-text">
+    <marquee>Welcome to the Messenger App - Chat and Connect!</marquee>
+  </div>
+
+  <!-- Username Form (appears before login) -->
+  <div id="username-container">
+    <h2>Create Your Username</h2>
+    <form id="username-form">
+      <input type="text" id="username" placeholder="Enter your username" required>
+      <button type="submit">Enter Chat</button>
+    </form>
+  </div>
+
+  <!-- Main Chat Container -->
+  <div id="chat-container" style="display: none;">
+    <div id="messages"></div>
+    <form id="message-form">
+      <input type="text" id="message" placeholder="Type a message" required>
+      <button type="submit">Send</button>
+    </form>
+  </div>
+
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    // Show the chat container and hide the username form after entering a username
+    const usernameForm = document.getElementById('username-form');
+    const usernameInput = document.getElementById('username');
+    const usernameContainer = document.getElementById('username-container');
+    const chatContainer = document.getElementById('chat-container');
+    const messagesDiv = document.getElementById('messages');
+
+    let currentUsername = '';
+
+    usernameForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      currentUsername = usernameInput.value;
+      if (currentUsername) {
+        usernameContainer.style.display = 'none';
+        chatContainer.style.display = 'block';
+      }
+    });
+
+    // Handle sending messages
+    const messageForm = document.getElementById('message-form');
+    const messageInput = document.getElementById('message');
+
+    messageForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const message = messageInput.value;
+      if (message) {
+        socket.emit('sendMessage', { sender: currentUsername, content: message });
+        messageInput.value = '';
+      }
+    });
+
+    // Display new messages
+    socket.on('newMessage', (message) => {
+      const div = document.createElement('div');
+      div.textContent = `${message.sender}: ${message.content}`;
+      messagesDiv.appendChild(div);
+      messagesDiv.scrollTop = messagesDiv.scrollHeight; // Scroll to the bottom
+    });
+  </script>
+
+</body>
+</html>
