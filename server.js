@@ -47,3 +47,37 @@ app.post('/signup', async (req, res) => {
     res.status(500).send('Error registering user');
   }
 });
+
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    const user = await User.findOne({ username, password });
+    if (!user) return res.status(400).send('Invalid username or password');
+    res.json({ username: user.username, name: user.name });
+  } catch (error) {
+    res.status(500).send('Error logging in');
+  }
+});
+
+// Real-time chat
+io.on('connection', (socket) => {
+  console.log('A user connected');
+
+  socket.on('sendMessage', async (data) => {
+    const { sender, content } = data;
+    const message = new Message({ sender, content });
+    await message.save();
+    io.emit('newMessage', message);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('A user disconnected');
+  });
+});
+
+// Dynamic Port Binding
+const PORT = process.env.PORT || 3000; // Use Render's provided port or fallback to 3000 for local
+server.listen(PORT, () => {
+  console.log(`Server running on http://localhost:${PORT}`);
+});
+  
